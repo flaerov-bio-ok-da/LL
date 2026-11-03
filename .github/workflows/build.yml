@@ -1,0 +1,48 @@
+name: Build LeonMenu.tipa
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Install dependencies
+        run: |
+          HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install dpkg make libplist openssl@3 ldid-procursus
+
+      - name: Checkout theos
+        uses: actions/checkout@v4
+        with:
+          repository: roothide/theos
+          path: theos
+          submodules: recursive
+
+      - name: Setup THEOS
+        run: |
+          rm -rf $GITHUB_WORKSPACE/theos/sdks
+          echo "THEOS=$GITHUB_WORKSPACE/theos" >> $GITHUB_ENV
+
+      - name: Checkout iOS SDKs
+        uses: actions/checkout@v4
+        with:
+          repository: theos/sdks
+          ref: master
+          path: theos/sdks
+
+      - name: Build
+        run: |
+          cd $GITHUB_WORKSPACE/repo/LeonMenu
+          FINALPACKAGE=1 gmake clean package
+
+      - name: Upload .tipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: LeonMenu
+          path: repo/LeonMenu/packages/LeonMenu.tipa
