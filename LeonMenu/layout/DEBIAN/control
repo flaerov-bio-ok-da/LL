@@ -1,0 +1,9 @@
+Package: com.tenrysoft.leonmenu
+Name: LeonMenu
+Version: 1.0
+Section: Utilities
+Depends: firmware (>= 14.0)
+Architecture: iphoneos-arm
+Author: TenrySoft
+Maintainer: TenrySoft
+Description: Floating Leon mod menu overlay.
